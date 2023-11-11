@@ -1,0 +1,1383 @@
+openapi: 3.1.0
+info:
+  title: Hotel Booking API Documentation
+  version: 1.0.0
+  description: A REST API backend developed for a typical Hotel Booking System and documented with swagger UI
+  license:
+    name: MIT
+    url: https://spdx.org/licenses/MIT.html
+  contact:
+    name: Udo Igwe Uchechukwu
+    url: #
+    email: udoigweuchechukwu@gmail.com
+    phone: +2348065198300
+servers:
+  - url: http://localhost:5001/api/v1
+    description: Development Server
+tags:
+  - name: Authentication
+    description: User Authentication Endpoints
+  - name: Rooms
+    description: Room Endpoints
+  - name: Images
+    description: Image Endpoints
+  - name: Reservations
+    description: Reservation Endpoints
+  - name: Bookings
+    description: Booking Endpoints
+components:
+  schemas:
+    error:
+      type: boolean
+    signUpDTO:
+      type: object
+      required:
+        - user_firstname
+        - user_lastname
+        - user_email
+        - user_phone
+        - password
+      properties:
+        user_firstname:
+          type: string
+          description: User first name
+        user_lastname:
+          type: string
+          description: User last name
+        user_email:
+          type: string
+          description: Email of user
+        user_phone:
+          type: string
+          description: User phone number
+        password:
+          type: string
+          description: Very strong password
+      example:
+        user_firstname: Jon
+        user_lastname: Snow
+        user_email: jonsnow@example.com
+        user_phone: '08065198300'
+        password: strongpass
+    loginDTO:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          description: User email
+        password:
+          type: string
+          description: User stored password
+      example:
+        email: jonsnow@example.com
+        password: strongpass
+    electionDTO:
+      type: object
+      required:
+        - election_title
+      properties:
+        election_title:
+          type: string
+    roomCategoryDTO:
+      type: object
+      required: 
+        - room_category_name
+        - room_category_price
+        - room_category_short_desc
+        - room_category_long_desc
+        - no_of_rooms
+        - features
+        - images
+      properties:
+        images:
+          type: array
+          items:
+            type: string
+            format: binary
+            description: The Room images to be uploaded
+          description: Images(s) to be uploaded
+          minItems: 1
+        features:
+          type: string
+          description: Stringified array of room features
+          example: ['1-2 Persons', 'Breakfast', 'Free Wifi', '200 sqft room', 'Twin Bed', 'Swimming Pool']
+        room_category_name:
+          type: string
+          description: Name of room category
+        room_category_price:
+          type: number
+          formart: double
+          description: Room category price
+        room_category_short_desc:
+          type: string
+          description: A short description for the room category
+        room_category_long_desc:
+          type: string
+          description: A long description for the room
+        no_of_rooms:
+          type: integer
+          description: Total number of rooms in this category
+    roomCategoryImageDTO:
+      type: object
+      required: 
+        - room_category_id
+        - images
+      properties:
+        images:
+          type: array
+          items:
+            type: string
+            format: binary
+            description: The Room images to be uploaded
+          description: Images(s) to be uploaded
+          minItems: 1
+        room_category_id:
+          type: integer
+          description: ID of Room Category
+    updateRoomCategoryDTO:
+      type: object
+      required: 
+        - room_category_name
+        - room_category_price
+        - room_category_short_desc
+        - room_category_long_desc
+        - room_category_status
+        - no_of_rooms
+        - features
+      properties:
+        features:
+          type: string
+          description: Stringified array of room features
+          example: "[\"1-2 Persons\", \"Breakfast\", \"Free Wifi\", \"200 sqft room\", \"Twin Bed\", \"Swimming Pool\"]"
+        room_category_name:
+          type: string
+          description: Name of room category
+        room_category_price:
+          type: number
+          formart: double
+          description: Room category price
+        room_category_short_desc:
+          type: string
+          description: A short description for the room category
+        room_category_long_desc:
+          type: string
+          description: A long description for the room
+        no_of_rooms:
+          type: integer
+          description: Total number of rooms in this category
+        room_category_status:
+          type: string
+          description: Status of room category
+    updateRoomCategoryImageDTO:
+      type: object
+      required: 
+        - room_category_id
+        - room_category_image_status
+      properties:
+        room_category_id:
+          type: integer
+          description: ID of room category
+        room_category_image_status:
+          type: string
+          description: Room category image status
+          enum: ['Published', 'Unpublished']
+    reservationDTO:
+      type: object
+      required: 
+        - room_category_id
+        - check_in_date
+        - check_out_date
+        - customer_fullname
+        - customer_email
+        - customer_phone
+        - adults_per_room
+        - children_per_room
+        - no_of_rooms
+      properties:
+        room_category_id:
+          type: integer
+          description: ID of room category
+        check_in_date:
+          type: string
+          format: date
+          description: Date string in the format YYYY-MM-DD
+        check_out_date:
+          type: string
+          format: date
+          description: Date string in the format YYYY-MM-DD
+        customer_fullname:
+          type: string
+        customer_email:
+          type: string
+        customer_phone:
+          type: string
+        adults_per_room:
+          type: string
+        children_per_room:
+          type: string
+        no_of_rooms:
+          type: integer
+        remarks:
+          type: string
+    bookReservationDTO:
+      type: object
+      required: 
+        - reservation_id
+        - amount_paid
+      properties:
+        reservation_id:
+          type: integer
+          description: ID of reservation
+        amount_paid:
+          type: number
+          format: float
+          description: Amount paid for this booking
+        remarks:
+          type: string
+    updateBookingDTO:
+      type: object
+      required: 
+        - booking_status
+        - amount_paid
+      properties:
+        booking_status:
+          type: string
+          description: Booking Status
+        amount_paid:
+          type: number
+          format: float
+          description: Amount paid for this booking
+        remarks:
+          type: string
+    voteDTO:
+      type: object
+      required: 
+        - election_id
+        - voter_id
+        - candidate_id
+      properties:
+        election_id:
+          type: integer
+          description: Election ID
+        candidate_id:
+          type: integer
+          description: Candidate ID
+    messageResponse:
+      type: object
+      properties:
+        error:
+          type: boolean
+          example: false
+        message:
+          type: string
+    paginationResponse:
+      type: object
+      properties:
+        totalRecords:
+          type: integer
+          description: Total number of records
+        totalPages:
+          type: integer
+          description: Total number of pages
+          nullable: true
+        currentPage:
+          type: integer
+          description: Current page (null if there's no page detail)
+          nullable: true
+        itemsPerPage:
+          type: integer
+          description: Items per page (null if there's no page detail)
+          nullable: true
+        nextPage:
+          type: "integer"
+          description: Next page number (null if there's no next page)
+          nullable: true
+        prevPage:
+          type: integer
+          description: Previous page number (null if there's no previous page)
+          nullable: true
+    userResponse:
+      type: object
+      properties:
+        user_id:
+          type: integer
+        user_firstname:
+          type: string
+        user_lastname:
+          type: string
+        user_email:
+          type: string
+        user_phone:
+          type: string
+        user_role: 
+          type: string
+        user_status:
+          type: string
+        user_created_at:
+          type: string
+    roomCategoryImageResponse:
+      type: object
+      properties:
+        room_category_image_id:
+          type: integer
+        room_category_id:
+          type: integer
+        room_category_image_filename:
+          type: string
+        room_category_image_mimetype:
+          type: string
+        room_category_image_type:
+          type: string
+        room_category_image_status:
+          type: string
+        room_category_name:
+          type: string
+    roomFeatureResponse:
+      type: object
+      properties:
+        room_feature_id:
+          type: integer
+        room_category_id:
+          type: integer
+        room_feature:
+          type: string
+        room_feature_status:
+          type: string
+    roomCategoryResponse:
+      type: object
+      properties:
+        room_category_id:
+          type: integer
+        room_Category_name:
+          type: integer
+        room_category_slug:
+          type: string
+        room_category_price:
+          type: number
+          format: double
+        room_category_short_desc:
+          type: string
+        room_category_long_desc:
+          type: string
+        no_of_rooms:
+          type: integer
+        room_category_created_at:
+          type: string
+        room_category_status:
+          type: string
+          enum: ['Active', 'Inactive']
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/roomCategoryImageResponse'
+        features:
+          type: array
+          items:
+            $ref: '#/components/schemas/roomFeatureResponse'
+    reservationResponse:
+      type: object
+      properties:
+        reservation_id:
+          type: integer
+        room_category_id:
+          type: integer
+        check_in_date:
+          type: string
+          format: date
+        check_out_date:
+          type: string
+          format: date
+        reservation_timestamp:
+          type: string
+        total_amount:
+          type: number
+          format: float
+        customer_fullname:
+          type: string
+        customer_email:
+          type: string
+        customer_phone:
+          type: string
+        adults_per_room:
+          type: string
+        children_per_room:
+          type: string
+        no_of_rooms:
+          type: integer
+        remarks:
+          type: string
+        reservation_status:
+          type: string
+          enum: ['Reserved', 'Unreserved']
+        room_category_name:
+          type: string
+    bookingResponse:
+      type: object
+      properties:
+        booking_id:
+          type: integer
+        reservation_id:
+          type: integer
+        booking_timestamp:
+          type: string
+        expected_amount:
+          type: number
+          format: float
+        amount_paid:
+          type: number
+          format: float
+        balance:
+          type: number
+          format: float
+        remarks:
+          type: string
+        booking_status:
+          type: string
+        room_category_id:
+          type: integer
+        check_in_date:
+          type: string
+          format: date
+        check_out_date:
+          type: string
+          format: date
+        reservation_timestamp:
+          type: string
+        total_amount:
+          type: number
+          format: float
+        customer_fullname:
+          type: string
+        customer_email:
+          type: string
+        customer_phone:
+          type: string
+        adults_per_room:
+          type: string
+        children_per_room:
+          type: string
+        no_of_rooms:
+          type: integer
+        reservation_status:
+          type: string
+          enum: ['Reserved', 'Unreserved']
+        room_category_name:
+          type: string
+    loginResponseData:
+      type: object
+      properties:
+        error:
+          type: boolean
+          $ref: '#/components/schemas/error'
+        user:
+          type: object
+          $ref: '#/components/schemas/userResponse'
+        token:
+          type: string
+          format: jwt
+          description: User authentication token for request
+    dashboardResponse:
+      type: object
+      properties:
+        activeUsers:
+          type: integer
+        inactiveUsers:
+          type: integer
+        activeCandidates:
+          type: integer
+        inactiveCandidates:
+          type: integer
+        activeElections:
+          type: integer
+        inactiveElections:
+          type: integer
+        total_votes:
+          type: integer
+    reservationResponseData:
+      type: object
+      properties:
+        error:
+          type: boolean
+          $ref: '#/components/schemas/error'
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/reservationResponse'
+        paginationData:
+          type: object
+          $ref: '#/components/schemas/paginationResponse'
+    bookingResponseData:
+      type: object
+      properties:
+        error:
+          type: boolean
+          $ref: '#/components/schemas/error'
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/bookingResponse'
+        paginationData:
+          type: object
+          $ref: '#/components/schemas/paginationResponse'
+    voteResponseData:
+      type: object
+      properties:
+        error:
+          type: boolean
+          $ref: '#/components/schemas/error'
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/voteResponse'
+        paginationData:
+          type: object
+          $ref: '#/components/schemas/paginationResponse'
+    roomCategoryResponseData:
+      type: object
+      properties:
+        error:
+          type: boolean
+          $ref: '#/components/schemas/error'
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/roomCategoryResponse'
+        paginationData:
+          type: object
+          $ref: '#/components/schemas/paginationResponse'
+    roomCategoryImageResponseData:
+      type: object
+      properties:
+        error:
+          type: boolean
+          $ref: '#/components/schemas/error'
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/roomCategoryImageResponse'
+        paginationData:
+          type: object
+          $ref: '#/components/schemas/paginationResponse'
+    dashboardResponseData:
+      type: object
+      properties:
+        error:
+          type: boolean
+          $ref: '#/components/schemas/error'
+        dashboard:
+          $ref: '#/components/schemas/dashboardResponse'
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-access-token
+paths:
+  /sign-up:
+    post:
+      summary: Signup endpoint
+      tags: [Authentication]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/signUpDTO'
+      responses:
+        200:
+          description: Signup completed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/messageResponse'
+        500:
+          description: Some server error
+  /login:
+    post:
+      summary: Login endpoint
+      tags: [Authentication]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/loginDTO'
+      responses:
+        200:
+          description: Login successful.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/loginResponseData'
+        500:
+          description: Some server error
+  /rooms:
+    post:
+      summary: Room Category creation endpoint
+      tags: [Rooms]
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/roomCategoryDTO'
+      responses:
+        200:
+          description: Room category created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/messageResponse'
+        500:
+          description: Some server error
+    get: 
+      summary: Get Room Categories
+      tags: [Rooms]
+      parameters:
+        - name: room_category_status
+          in: query
+          required: false
+          description: Room Category Status (optional)
+          schema:
+            type: string
+            enum: [Active, Inactive]
+        - name: page
+          in: query
+          required: false
+          description: Page number (optional but compolsory if perPage is available)
+          schema:
+            type: integer
+        - name: perPage
+          in: query
+          required: false
+          description: Items per page (optional but compolsory if page is available)
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/roomCategoryResponseData'
+        500:
+          description: Server error
+  /reservations:
+    post:
+      summary: Create a reservation
+      tags: [Reservations]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/reservationDTO'
+      responses:
+        200:
+          description: Reservation created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/messageResponse'
+        500:
+          description: Some server error
+    get: 
+      summary: Get Reservations
+      tags: [Reservations]
+      parameters:
+        - name: room_category_id
+          in: query
+          required: false
+          description: Room Category ID (optional)
+          schema:
+            type: integer
+        - name: check_in_date
+          in: query
+          required: false
+          description: Checkin Date (YYYY-DD-MM) (optional)
+          schema:
+            type: string
+            format: date
+        - name: check_out_date
+          in: query
+          required: false
+          description: Checkout Date (YYYY-DD-MM) (optional)
+          schema:
+            type: string
+            format: date
+        - name: reservation_date
+          in: query
+          required: false
+          description: Reservation Date (YYYY-DD-MM) (optional)
+          schema:
+            type: string
+            format: date
+        - name: from_reservation_date
+          in: query
+          required: false
+          description: From Reservation Date (YYYY-DD-MM) (optional)
+          schema:
+            type: string
+            format: date
+        - name: to_reservation_date
+          in: query
+          required: false
+          description: To Reservation Date (YYYY-DD-MM) (optional)
+          schema:
+            type: string
+            format: date
+        - name: from_check_in_date
+          in: query
+          required: false
+          description: From Checkin Date (YYYY-DD-MM) (optional)
+          schema:
+            type: string
+            format: date
+        - name: to_check_in_date
+          in: query
+          required: false
+          description: To Checkin Date (YYYY-DD-MM) (optional)
+          schema:
+            type: string
+            format: date
+        - name: from_check_out_date
+          in: query
+          required: false
+          description: From Checkout Date (YYYY-DD-MM) (optional)
+          schema:
+            type: string
+            format: date
+        - name: to_check_out_date
+          in: query
+          required: false
+          description: To Checkout Date (YYYY-DD-MM) (optional)
+          schema:
+            type: string
+            format: date
+        - name: reservation_status
+          in: query
+          required: false
+          description: Reservation Status (optional)
+          schema:
+            type: string
+            enum: [Reserved, Unreserved]
+        - name: page
+          in: query
+          required: false
+          description: Page number (optional but compolsory if perPage is available)
+          schema:
+            type: integer
+        - name: perPage
+          in: query
+          required: false
+          description: Items per page (optional but compolsory if page is available)
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/reservationResponseData'
+        500:
+          description: Server error
+  /bookings:
+    post:
+      summary: Book a reservation
+      tags: [Bookings]
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/bookReservationDTO'
+      responses:
+        200:
+          description: Reservation booked successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/messageResponse'
+        500:
+          description: Some server error
+    get: 
+      summary: Get Bookings
+      tags: [Bookings]
+      parameters:
+        - name: reservation_id
+          in: query
+          required: false
+          description: Reservation ID (optional)
+          schema:
+            type: integer
+        - name: booking_date
+          in: query
+          required: false
+          description: Booking Date (YYYY-DD-MM) (optional)
+          schema:
+            type: string
+            format: date
+        - name: from_booking_date
+          in: query
+          required: false
+          description: From Booking Date (YYYY-DD-MM) (optional)
+          schema:
+            type: string
+            format: date
+        - name: to_booking_date
+          in: query
+          required: false
+          description: To Booking Date (YYYY-DD-MM) (optional)
+          schema:
+            type: string
+            format: date
+        - name: booking_status
+          in: query
+          required: false
+          description: Booking Status (optional)
+          schema:
+            type: string
+            enum: [Active, Inactive]
+        - name: room_category_id
+          in: query
+          required: false
+          description: Room Category ID (optional)
+          schema:
+            type: integer
+        - name: check_in_date
+          in: query
+          required: false
+          description: Checkin Date (YYYY-DD-MM) (optional)
+          schema:
+            type: string
+            format: date
+        - name: check_out_date
+          in: query
+          required: false
+          description: Checkout Date (YYYY-DD-MM) (optional)
+          schema:
+            type: string
+            format: date
+        - name: from_check_in_date
+          in: query
+          required: false
+          description: From Checkin Date (YYYY-DD-MM) (optional)
+          schema:
+            type: string
+            format: date
+        - name: to_check_in_date
+          in: query
+          required: false
+          description: To Checkin Date (YYYY-DD-MM) (optional)
+          schema:
+            type: string
+            format: date
+        - name: from_check_out_date
+          in: query
+          required: false
+          description: From Checkout Date (YYYY-DD-MM) (optional)
+          schema:
+            type: string
+            format: date
+        - name: to_check_out_date
+          in: query
+          required: false
+          description: To Checkout Date (YYYY-DD-MM) (optional)
+          schema:
+            type: string
+            format: date
+        - name: page
+          in: query
+          required: false
+          description: Page number (optional but compolsory if perPage is available)
+          schema:
+            type: integer
+        - name: perPage
+          in: query
+          required: false
+          description: Items per page (optional but compolsory if page is available)
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bookingResponseData'
+        500:
+          description: Server error
+  /reservations/{reservation_id}:
+    get: 
+      summary: Get Single Reservation
+      tags: [Reservations]
+      parameters:
+        - name: reservation_id
+          in: path
+          required: true
+          description: Reservation ID
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: boolean
+                    $ref: '#/components/schemas/error'
+                  reservation:
+                    $ref: '#/components/schemas/reservationResponse'
+        500:
+          description: Server error
+    delete: 
+      summary: Delete Single Reservation
+      tags: [Reservations]
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: reservation_id
+          in: path
+          required: true
+          description: Reservation ID
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Reservation deleted successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/messageResponse'
+        500:
+          description: Server error
+  /bookings/{booking_id}:
+    get: 
+      summary: Get Single Booking
+      tags: [Bookings]
+      parameters:
+        - name: booking_id
+          in: path
+          required: true
+          description: Booking ID
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: boolean
+                    $ref: '#/components/schemas/error'
+                  reservation:
+                    $ref: '#/components/schemas/bookingResponse'
+        500:
+          description: Server error
+    put:
+      summary: Update Booking
+      tags: [Bookings]
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: booking_id
+          in: path
+          required: true
+          description: Booking ID
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/updateBookingDTO'
+      responses:
+        200:
+          description: Booking updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/messageResponse'
+        500:
+          description: Some server error
+    delete: 
+      summary: Delete Single Booking
+      tags: [Bookings]
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: booking_id
+          in: path
+          required: true
+          description: Booking ID
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Booking deleted successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/messageResponse'
+        500:
+          description: Server error
+  /rooms/{room_category_id}:
+    put:
+      summary: Update room category
+      tags: [Rooms]
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: room_category_id
+          in: path
+          required: true
+          description: Room Category ID
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/updateRoomCategoryDTO'
+      responses:
+        200:
+          description: Room Category updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/messageResponse'
+        500:
+          description: Some server error
+    get: 
+      summary: Get Single Room Category
+      tags: [Rooms]
+      parameters:
+        - name: room_category_id
+          in: path
+          required: true
+          description: Room Category ID
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: boolean
+                    $ref: '#/components/schemas/error'
+                  room:
+                    $ref: '#/components/schemas/roomCatgeoryResponse'
+        500:
+          description: Server error
+    delete: 
+      summary: Delete Single Room Category
+      tags: [Rooms]
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: room_category_id
+          in: path
+          required: true
+          description: Room Category ID
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Room Category deleted successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/messageResponse'
+        500:
+          description: Server error
+  /candidates/{candidate_id}:
+    put:
+      summary: Candidate updating endpoint
+      tags: [Candidates]
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: candidate_id
+          in: path
+          required: true
+          description: Candidate ID
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/candidateDTO'
+      responses:
+        200:
+          description: Candidate updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/messageResponse'
+        500:
+          description: Some server error
+    get: 
+      summary: Get Single Candidate
+      tags: [Candidates]
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: candidate_id
+          in: path
+          required: true
+          description: Candidate ID
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: boolean
+                    $ref: '#/components/schemas/error'
+                  document:
+                    $ref: '#/components/schemas/candidateResponse'
+        500:
+          description: Server error
+    delete: 
+      summary: Delete Single Candidate
+      tags: [Candidates]
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: candidate_id
+          in: path
+          required: true
+          description: Candidate ID
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Candidate deleted successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/messageResponse'
+        500:
+          description: Server error
+  /images:
+    post:
+      summary: Image management endpoint
+      tags: [Images]
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/roomCategoryImageDTO'
+      responses:
+        200:
+          description: Images uploaded successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/messageResponse'
+        500:
+          description: Some server error
+    get: 
+      summary: Get Images
+      tags: [Images]
+      parameters:
+        - name: room_category_id
+          in: query
+          required: false
+          description: Room Category ID (optional)
+          schema:
+            type: integer
+        - name: room_category_image_status
+          in: query
+          required: false
+          description: Room Category Image Status (optional)
+          schema:
+            type: string
+            enum: ['Published', 'Unpublished']
+        - name: room_category_image_type
+          in: query
+          required: false
+          description: Room Category Image Type (optional)
+          schema:
+            type: string
+            enum: ['Portrait', 'Landscape']
+        - name: page
+          in: query
+          required: false
+          description: Page number (optional but compolsory if perPage is available)
+          schema:
+            type: integer
+        - name: perPage
+          in: query
+          required: false
+          description: Items per page (optional but compolsory if page is available)
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/roomCategoryImageResponseData'
+        500:
+          description: Server error
+  /images/{image_id}:
+    get: 
+      summary: Get Single Image
+      tags: [Images]
+      parameters:
+        - name: image_id
+          in: path
+          required: true
+          description: Image ID
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: boolean
+                    $ref: '#/components/schemas/error'
+                  document:
+                    $ref: '#/components/schemas/roomCategoryImageResponse'
+        500:
+          description: Server error
+    put:
+      summary: Update room category Image
+      tags: [Images]
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: image_id
+          in: path
+          required: true
+          description: Room Category Image ID
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/updateRoomCategoryImageDTO'
+      responses:
+        200:
+          description: Room Category Image updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/messageResponse'
+        500:
+          description: Some server error
+    delete: 
+      summary: Delete Single Room Category Image
+      tags: [Images]
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: image_id
+          in: path
+          required: true
+          description: Image ID
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Image deleted successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/messageResponse'
+        500:
+          description: Server error
+  /ranks:
+    get: 
+      summary: Get Ranks
+      tags: [Votes]
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: election_id
+          in: query
+          required: false
+          description: Election ID (optional)
+          schema:
+            type: integer
+        - name: candidate_id
+          in: query
+          required: false
+          description: candidate ID (optional)
+          schema:
+            type: integer
+        - name: page
+          in: query
+          required: false
+          description: Page number (optional but compolsory if perPage is available)
+          schema:
+            type: integer
+        - name: perPage
+          in: query
+          required: false
+          description: Items per page (optional but compolsory if page is available)
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rankResponseData'
+        500:
+          description: Server error
+  /dashboard:
+    get: 
+      summary: Document Count Summary
+      tags: [Dashboard]
+      security:
+        - ApiKeyAuth: []
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dashboardResponseData'
+        500:
+          description: Server error
+  

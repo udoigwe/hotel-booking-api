@@ -1,0 +1,44 @@
+{
+  "name": "hotel-booking-api",
+  "version": "1.0.0",
+  "description": "A REST API backend for a typical hotel booking system",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/udoigwe/hotel-booking-api.git"
+  },
+  "keywords": [
+    "Node.js",
+    "Express",
+    "Hotel",
+    "Booking",
+    "Mysql",
+    "Swagger"
+  ],
+  "author": "Udo Igwe Uchechukwu",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/udoigwe/hotel-booking-api/issues"
+  },
+  "homepage": "https://github.com/udoigwe/hotel-booking-api#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "crypto-js": "^4.1.1",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-fileupload": "^1.4.1",
+    "express-useragent": "^1.0.15",
+    "express-validator": "^7.0.1",
+    "js-yaml": "^4.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "moment": "^2.29.4",
+    "mysql": "^2.18.1",
+    "nodemon": "^3.0.1",
+    "sharp": "^0.32.6",
+    "swagger-ui-express": "^5.0.0"
+  }
+}
