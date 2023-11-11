@@ -14,6 +14,8 @@ info:
 servers:
   - url: http://localhost:5001/api/v1
     description: Development Server
+  - url: http://217.72.195.123:3031/api/v1
+    description: Live Server
 tags:
   - name: Authentication
     description: User Authentication Endpoints
