@@ -31,6 +31,7 @@ const reservationRoutes = require('./src/routes/reservation');
 const bookingRoutes = require('./src/routes/booking');
 const dashboardRoutes = require('./src/routes/dashboard');
 const userRoutes = require('./src/routes/user');
+const messageRoutes = require('./src/routes/message');
 
 // Parse YAML Swagger documentation to JSON
 const swaggerFile = fs.readFileSync('./src/documentation/swagger.yaml', 'utf8');
@@ -44,6 +45,7 @@ app.use(process.env.ROUTE_PREFIX, reservationRoutes);
 app.use(process.env.ROUTE_PREFIX, bookingRoutes);
 app.use(process.env.ROUTE_PREFIX, dashboardRoutes);
 app.use(process.env.ROUTE_PREFIX, userRoutes);
+app.use(process.env.ROUTE_PREFIX, messageRoutes);
 
 // Serve Swagger documentation at /api/docs
 app.use(process.env.API_DOCS_ROUTE_PREFIX, swaggerUi.serve);
