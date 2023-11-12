@@ -27,6 +27,8 @@ tags:
     description: Reservation Endpoints
   - name: Bookings
     description: Booking Endpoints
+  - name: Messages
+    description: Message Endpoints
 components:
   schemas:
     error:
@@ -76,12 +78,31 @@ components:
       example:
         email: jonsnow@example.com
         password: strongpass
-    electionDTO:
+    accountUpdateDTO:
       type: object
       required:
-        - election_title
+        - user_firstname
+        - user_lastname
+        - user_email
+        - user_phone
       properties:
-        election_title:
+        user_firstname:
+          type: string
+        user_lastname:
+          type: string
+        user_email:
+          type: string
+        user_phone:
+          type: string
+    passwordUpdateDTO:
+      type: object
+      required:
+        - current_password
+        - new_password
+      properties:
+        current_password:
+          type: string
+        new_password:
           type: string
     roomCategoryDTO:
       type: object
@@ -254,19 +275,30 @@ components:
           description: Amount paid for this booking
         remarks:
           type: string
-    voteDTO:
+    sendMessageDTO:
       type: object
       required: 
-        - election_id
-        - voter_id
-        - candidate_id
+        - sender
+        - sender_phone
+        - sender_email
+        - subject
+        - message
       properties:
-        election_id:
-          type: integer
-          description: Election ID
-        candidate_id:
-          type: integer
-          description: Candidate ID
+        sender:
+          type: string
+          description: Sender Full name
+        sender_phone:
+          type: string
+          description: Sender phone number
+        sender_email:
+          type: string
+          description: Sender email
+        subject:
+          type: string
+          description: Message subject
+        message:
+          type: string
+          description: Message
     messageResponse:
       type: object
       properties:
@@ -274,6 +306,35 @@ components:
           type: boolean
           example: false
         message:
+          type: string
+    AccountUpdateResponse:
+      type: object
+      properties:
+        error:
+          type: boolean
+          example: false
+        message:
+          type: string
+        token:
+          type: string
+    sentMessageResponse:
+      type: object
+      properties:
+        message_id:
+          type: integer
+        sender:
+          type: string
+        sender_phone:
+          type: string
+        sender_email:
+          type: string
+        subject:
+          type: string
+        message:
+          type: string
+        message_created_at:
+          type: string
+        message_status:
           type: string
     paginationResponse:
       type: object
@@ -521,6 +582,19 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/bookingResponse'
+        paginationData:
+          type: object
+          $ref: '#/components/schemas/paginationResponse'
+    sentMessageResponseData:
+      type: object
+      properties:
+        error:
+          type: boolean
+          $ref: '#/components/schemas/error'
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/sentMessageResponse'
         paginationData:
           type: object
           $ref: '#/components/schemas/paginationResponse'
@@ -1327,25 +1401,95 @@ paths:
                 $ref: '#/components/schemas/messageResponse'
         500:
           description: Server error
-  /ranks:
+  /account-update:
+    put: 
+      summary: Update Account
+      tags: [Authentication]
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/accountUpdateDTO'
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountUpdateResponse'
+        500:
+          description: Server error
+  /password-update:
+    post: 
+      summary: Update Password
+      tags: [Authentication]
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/passwordUpdateDTO'
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/messageResponse'
+        500:
+          description: Server error
+  /dashboard:
     get: 
-      summary: Get Ranks
-      tags: [Votes]
+      summary: Document Count Summary
+      tags: [Dashboard]
+      security:
+        - ApiKeyAuth: []
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dashboardResponseData'
+        500:
+          description: Server error
+  /messages:
+    post:
+      summary: Message creating endpoint
+      tags: [Messages]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/sendMessageDTO'
+      responses:
+        200:
+          description: Message sent successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/messageResponse'
+        500:
+          description: Some server error
+    get: 
+      summary: Get Messages
+      tags: [Messages]
       security:
         - ApiKeyAuth: []
       parameters:
-        - name: election_id
+        - name: message_status
           in: query
           required: false
-          description: Election ID (optional)
+          description: Message Status (optional)
           schema:
-            type: integer
-        - name: candidate_id
-          in: query
-          required: false
-          description: candidate ID (optional)
-          schema:
-            type: integer
+            type: string
+            enum: [Read, Unread]
         - name: page
           in: query
           required: false
@@ -1364,22 +1508,56 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/rankResponseData'
+                $ref: '#/components/schemas/sentMessageResponseData'
         500:
           description: Server error
-  /dashboard:
+  /messages/{message_id}:
     get: 
-      summary: Document Count Summary
-      tags: [Dashboard]
+      summary: Get Single Message
+      tags: [Messages]
       security:
         - ApiKeyAuth: []
+      parameters:
+        - name: message_id
+          in: path
+          required: true
+          description: Message ID
+          schema:
+            type: integer
       responses:
         200:
           description: Success
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/dashboardResponseData'
+                type: object
+                properties:
+                  error:
+                    type: boolean
+                    $ref: '#/components/schemas/error'
+                  message:
+                    $ref: '#/components/schemas/sentMessageResponse'
         500:
           description: Server error
+    delete:
+      summary: Delete Message
+      tags: [Messages]
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: message_id
+          in: path
+          required: true
+          description: Message ID
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Message deleted successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/messageResponse'
+        500:
+          description: Some server error
   

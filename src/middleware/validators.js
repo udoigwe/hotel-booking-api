@@ -5,6 +5,7 @@ const imageValidations = require('../validations/image.validation');
 const reservationValidation = require('../validations/reservation.validation');
 const bookingValidations = require('../validations/booking.validation');
 const userValidations = require('../validations/user.validation');
+const messageValidations = require('../validations/message.validation');
 
 module.exports = {
     /* Auth route validators */
@@ -41,4 +42,9 @@ module.exports = {
     updateUser: validate(userValidations.updateUser),
     getUser: validate(userValidations.getUser),
     deleteUser: validate(userValidations.deleteUser),
+
+    /* Message route validators */
+    createMessage: validate(messageValidations.create),
+    getMessage: validate(messageValidations.getMessage),
+    deleteMessage: validate(messageValidations.getMessage),
 }

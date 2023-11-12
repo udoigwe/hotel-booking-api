@@ -33,6 +33,10 @@ module.exports = {
             `);
             //get bookings
             const bookings =  await util.promisify(connection.query).bind(connection)(`SELECT COUNT(*) AS booking_count FROM bookings`);
+            //get messages count
+            const messages =  await util.promisify(connection.query).bind(connection)(`SELECT COUNT(*) AS unread_count FROM messages WHERE message_status = 'Unread'`);
+            //get reservations count
+            const unreserved =  await util.promisify(connection.query).bind(connection)(`SELECT COUNT(*) AS unreserved_count FROM reservations WHERE reservation_status = 'Unreserved'`);
 
             //get reservation chart data
             for(let i = 0; i < months.length; i++)
@@ -80,7 +84,9 @@ module.exports = {
                 room_count: rooms[0].room_count,
                 booking_count: bookings[0].booking_count,
                 reservations: reservations.slice(0, 10),
-                chart_data: chartData
+                chart_data: chartData,
+                unread_count: messages[0].unread_count,
+                unreserved_count: unreserved[0].unreserved_count,
             }
 
             res.json({
