@@ -30,6 +30,7 @@ module.exports = {
                 LEFT JOIN room_categories b 
                 ON a.room_category_id = b.room_category_id
                 WHERE FROM_UNIXTIME(a.reservation_timestamp,'%Y') = '${year}'
+                ORDER BY a.reservation_id DESC
             `);
             //get bookings
             const bookings =  await util.promisify(connection.query).bind(connection)(`SELECT COUNT(*) AS booking_count FROM bookings`);
